@@ -13,14 +13,16 @@ import os
 directory = r'D:\Documentos\Cesar\MASTER_PROJECT\final_project\model\data_results'
 
 # open a .spydata file
-name = 'data_5_features_logistic_ovo'
+name = 'data_3_features_logistic_ovr'
 filename = name + '.pickle'
 
 if filename in os.listdir(directory):
-    with open('data_results/' + filename, 'rb') as fdesc:
+    real_path = os.path.join(directory, filename)
+    with open(real_path, 'rb') as fdesc:
              data = pickle.loads(fdesc.read())
-else:    
-    tar = tarfile.open('data_results/' + name + '.spydata', "r")
+else:
+    real_path = os.path.join(directory, name + '.spydata')
+    tar = tarfile.open(real_path, "r")
     # extract all pickled files to the current working directory
     tar.extractall(path='data_results/')
     extracted_files = tar.getnames()

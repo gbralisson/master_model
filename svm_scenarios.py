@@ -10,9 +10,16 @@ Created on Sat Mar 27 12:12:53 2021
 # Importing the libraries
 import numpy as np
 import pandas as pd
+import os
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+directory = r'D:\Documentos\Cesar\MASTER_PROJECT\final_project\model\data'
+file = 'data_2_scenarios_quantity.csv'
+path = os.path.join(directory, file)
 
 # Importing the dataset
-dataset = pd.read_csv('data_3_scenarios.csv')
+dataset = pd.read_csv(path)
 X = dataset.iloc[:, :-1].values
 y = dataset.iloc[:, -1].values
 
@@ -27,10 +34,10 @@ from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 1)
 
 # Feature Scaling
-# from sklearn.preprocessing import StandardScaler
-# sc = StandardScaler()
-# X_train = sc.fit_transform(X_train)
-# X_test = sc.transform(X_test)
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
 
 # Prepare model
 from sklearn.svm import SVC
@@ -58,6 +65,13 @@ y_pred = model.predict(X_test)
 y_comp = pd.DataFrame(np.concatenate((y_pred.reshape(len(y_pred),1), y_test.reshape(len(y_test),1)),1))
 
 # Confusion matrix
-from sklearn.metrics import confusion_matrix, accuracy_score
-cm = pd.DataFrame(confusion_matrix(y_test, y_pred))
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
+fig, ax = plt.subplots(figsize=(7,4))
+cm = confusion_matrix(y_test, y_pred)
+xlabel = ['login', 'setting']
+sns.heatmap(cm/np.sum(cm), annot=True, fmt='.0%', cmap='Blues', ax=ax, vmin=0, linewidths=1, xticklabels=xlabel, yticklabels=xlabel)
+plt.savefig('test.pdf')
 acc = accuracy_score(y_test, y_pred)
+prec = precision_score(y_test, y_pred, average=None)
+rec = recall_score(y_test, y_pred, average=None)
+f1 = f1_score(y_test, y_pred, average=None)

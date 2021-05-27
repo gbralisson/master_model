@@ -10,9 +10,16 @@ Created on Fri Mar 19 23:27:26 2021
 # Importing the libraries
 import numpy as np
 import pandas as pd
+import os
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+directory = r'D:\Documentos\Cesar\MASTER_PROJECT\final_project\model\data'
+file = 'data_3_features.csv'
+path = os.path.join(directory, file)
 
 # Importing the dataset
-dataset = pd.read_csv('data_3_features.csv')
+dataset = pd.read_csv(path)
 X = dataset.iloc[:, :-1].values
 y = dataset.iloc[:, -1].values
 
@@ -37,8 +44,6 @@ from sklearn.preprocessing import StandardScaler
 sc = StandardScaler()
 X_train[:,2:] = sc.fit_transform(X_train[:,2:])
 X_test[:,2:] = sc.transform(X_test[:,2:])
-
-
 
 # # Prepare the cross-validation procedure
 # from sklearn.model_selection import KFold
@@ -66,6 +71,13 @@ y_pred = model.predict(X_test)
 y_comp = pd.DataFrame(np.concatenate((y_pred.reshape(len(y_pred),1), y_test.reshape(len(y_test),1)),1))
 
 # Confusion matrix
-from sklearn.metrics import confusion_matrix, accuracy_score
-cm = pd.DataFrame(confusion_matrix(y_test, y_pred))
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
+fig, ax = plt.subplots(figsize=(7,4))
+cm = confusion_matrix(y_test, y_pred)
+xlabel = ['BT', 'CB', 'CTV', 'ET', 'IB', 'IV', 'NP', 'PB', 'RB', 'RTB', 'SB', 'SP', 'SWT', 'TV']
+sns.heatmap(cm/np.sum(cm), annot=True, fmt='.0%', cmap='Blues', ax=ax, vmin=0, linewidths=1, xticklabels=xlabel, yticklabels=xlabel)
+plt.savefig('test.pdf')
 acc = accuracy_score(y_test, y_pred)
+prec = precision_score(y_test, y_pred, average=None)
+rec = recall_score(y_test, y_pred, average=None)
+f1 = f1_score(y_test, y_pred, average=None)
